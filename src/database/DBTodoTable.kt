@@ -11,7 +11,7 @@ import org.ktorm.schema.varchar
 //table name and columns should correspond with actual table in mysql
 
 object DBTodoTable : Table<DBTodoEntity>(tableName = "todos") {
-    //these represents columns of the table
+    //these fields represent columns of the table
     val id = int("id").primaryKey().bindTo { it.id }
     val title = varchar("title").bindTo { it.title }
     val done = boolean("done").bindTo { it.done }

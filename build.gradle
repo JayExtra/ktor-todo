@@ -45,4 +45,8 @@ dependencies {
     implementation "org.ktorm:ktorm-core:3.2.0"
     implementation "org.ktorm:ktorm-support-mysql:3.2.0"
 
+    //authentication
+    implementation group: 'io.ktor', name: 'ktor-auth', version: ktor_version
+    implementation group: 'io.ktor', name: 'ktor-auth-jwt', version: ktor_version
+
 }

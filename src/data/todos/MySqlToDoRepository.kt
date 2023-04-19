@@ -1,4 +1,4 @@
-package com.dev.james.data
+package com.dev.james.data.todos
 
 import com.dev.james.database.DatabaseManager
 import com.dev.james.entities.ToDo
