@@ -1,12 +1,10 @@
 package com.dev.james.database
 
+import com.dev.james.data.authentication.UserRepository
 import com.dev.james.entities.ToDo
 import com.dev.james.entities.ToDoDraft
 import org.ktorm.database.Database
-import org.ktorm.dsl.delete
-import org.ktorm.dsl.eq
-import org.ktorm.dsl.insertAndGenerateKey
-import org.ktorm.dsl.update
+import org.ktorm.dsl.*
 import org.ktorm.entity.firstOrNull
 import org.ktorm.entity.sequenceOf
 import org.ktorm.entity.toList
@@ -27,6 +25,28 @@ class DatabaseManager {
         ktormDatabase = Database.connect(jdbcUrl, user = username, password = password)
     }
 
+    //user
+
+    fun addUser(user : UserRepository.User) : Boolean {
+
+        val insertionProcess = ktormDatabase.insert(DBUserTable){
+            set(DBUserTable.user_id, user.userId )
+            set(DBUserTable.username , user.username)
+            set(DBUserTable.password , user.password)
+            set(DBUserTable.salt , user.salt)
+            set(DBUserTable.email , user.email)
+        }
+
+        return insertionProcess > 0
+    }
+
+    fun getUser(email : String) : DBUserEntity? {
+        return ktormDatabase.sequenceOf(DBUserTable)
+            .firstOrNull{ it.email eq email}
+    }
+
+
+    //todos
     fun getAllToDos(): List<DBTodoEntity> {
         return ktormDatabase.sequenceOf(
             DBTodoTable

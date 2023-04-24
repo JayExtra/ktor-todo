@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
+import java.util.*
 
 class JwTConfig(jwtSecret : String) {
 
@@ -41,7 +42,7 @@ class JwTConfig(jwtSecret : String) {
         verifier(jwtVerifier)
         realm = jwtRealm
         validate {
-            val userId = it.payload.getClaim(CLAIM_USERID).asInt()
+            val userId = it.payload.getClaim(CLAIM_USERID).asString()
             val userName = it.payload.getClaim(CLAIM_USERNAME).asString()
 
             if (userId != null && userName != null) {
@@ -55,6 +56,6 @@ class JwTConfig(jwtSecret : String) {
     /**
      * POKO, that contains information of an authenticated user that is authenticated via jwt
      */
-    data class JwtUser(val userId: Int, val userName: String): Principal
+    data class JwtUser(val userId: String, val userName: String): Principal
 
 }

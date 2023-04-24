@@ -2,10 +2,15 @@ package com.dev.james.data.authentication
 
 interface UserRepository {
 
-    fun loginUser(username : String , password : String) : User?
+    fun loginUser(email : String, password : String) : User?
+
+    fun signUpUser(user : UserRepository.User) : Boolean
 
     data class User(
-        val userId : Int ,
-        val username : String
+        val userId : String ,
+        val email : String ,
+        val username : String ,
+        val salt : String ,
+        val password: String
     )
 }

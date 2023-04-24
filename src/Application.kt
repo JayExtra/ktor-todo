@@ -1,12 +1,14 @@
 package com.dev.james
 
 import com.dev.james.authentication.JwTConfig
-import com.dev.james.data.authentication.InMemoryUserRepository
+import com.dev.james.data.authentication.MySqlUserRepository
 import com.dev.james.data.authentication.UserRepository
+import com.dev.james.data.authentication.security.SHA256HashingService
+import com.dev.james.data.authentication.security.SaltedHash
 import com.dev.james.data.todos.MySqlToDoRepository
 import com.dev.james.data.todos.ToDoRepository
-import com.dev.james.entities.LoginBody
-import com.dev.james.entities.ToDoDraft
+import com.dev.james.entities.*
+import com.dev.james.utilities.generateRandomUid
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.request.*
@@ -20,6 +22,7 @@ import io.ktor.gson.*
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 val jwtConfig = JwTConfig(System.getenv("KTOR_TODOLIST_JWT_SECRET"))
+
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
@@ -27,9 +30,7 @@ fun Application.module(testing: Boolean = false) {
 
     /*
 
-    TODO:
-        1. Update this backend to support sign up and saving of user credentials in the database.
-        2. Support hashing and salting of user password
+    TODO: 2. Associate a todo with a user id and fetch todos by user id
         3. Put support for token expiry and token refresh
         4. Research and add support for structured concurrency with Coroutines.
     */
@@ -39,6 +40,7 @@ fun Application.module(testing: Boolean = false) {
 
         }
     }
+
 
     install(CallLogging)
 
@@ -51,7 +53,8 @@ fun Application.module(testing: Boolean = false) {
     routing {
 
         val repository : ToDoRepository = MySqlToDoRepository()
-        val userRepository : UserRepository = InMemoryUserRepository()
+        val userRepository : UserRepository = MySqlUserRepository()
+        val hashingService = SHA256HashingService()
 
         get("/") {
             call.respondText("HELLO TODO BACKEND!")
@@ -60,16 +63,77 @@ fun Application.module(testing: Boolean = false) {
         post("/login") {
             val loginBody = call.receive<LoginBody>()
 
-            val user = userRepository.loginUser(loginBody.username , loginBody.password)
+            val user = userRepository.loginUser(loginBody.email , loginBody.password)
 
             if(user == null){
                 call.respond(HttpStatusCode.Unauthorized , "Invalid credentials")
                 return@post
             }
 
+            val isValidPassword = hashingService.verify(
+                value = loginBody.password ,
+                saltedHash = SaltedHash(
+                    hash = user.password ,
+                    salt = user.salt
+                )
+            )
+
+            if( !isValidPassword ){
+                call.respond(HttpStatusCode.Conflict , "Incorrect password or username")
+                return@post
+            }
+
             val token = jwtConfig.generateToken(JwTConfig.JwtUser(user.userId , user.username))
 
-            call.respond(token)
+            val loginResponse = LoginResponseBody(
+                token = token ,
+                user = UserDetails(
+                    email = user.email ,
+                    password = user.password ,
+                    user_id = user.userId ,
+                    username = user.username
+                )
+            )
+
+            call.respond(loginResponse)
+
+        }
+
+        post("/signup"){
+
+            val credentials = call.receive<SignUpBody>()
+
+            val isEmailEmpty = credentials.email.isEmpty()
+            val isEmailCorrect = credentials.email.contains("@")
+            val isPasswordEmpty = credentials.password.isEmpty()
+            val isUsernameEmpty = credentials.username.isEmpty()
+
+            if(!isEmailCorrect || isEmailEmpty || isPasswordEmpty || isUsernameEmpty){
+                call.respond(HttpStatusCode.Conflict , "Ensure that all credentials are correct")
+                return@post
+            }
+
+            val saltedHash = hashingService.generateSlatedHash(
+                value = credentials.password
+            )
+
+            val createUserAction = userRepository.signUpUser(
+                user = UserRepository.User(
+                    userId = generateRandomUid(10) ,
+                    email = credentials.email ,
+                    username = credentials.username ,
+                    salt = saltedHash.salt ,
+                    password = saltedHash.hash
+                )
+            )
+
+            if(!createUserAction){
+                call.respond(HttpStatusCode.InternalServerError , "Cannot signup user at the moment , please try again later")
+                return@post
+            }
+
+            call.respond(HttpStatusCode.OK)
+
         }
 
         authenticate {

@@ -49,4 +49,10 @@ dependencies {
     implementation group: 'io.ktor', name: 'ktor-auth', version: ktor_version
     implementation group: 'io.ktor', name: 'ktor-auth-jwt', version: ktor_version
 
+    //commons codec
+    implementation "commons-codec:commons-codec:$commons_codec_version"
+
+    //kotlinx-serialization
+
+
 }
