@@ -30,8 +30,7 @@ fun Application.module(testing: Boolean = false) {
 
     /*
 
-    TODO: 2. Associate a todo with a user id and fetch todos by user id
-        3. Put support for token expiry and token refresh
+    TODO: 3. Put support for token expiry and token refresh
         4. Research and add support for structured concurrency with Coroutines.
     */
 
@@ -143,17 +142,31 @@ fun Application.module(testing: Boolean = false) {
                 call.respond(user)
             }
 
-            get("/todos"){
-                call.respond(repository.getAllTodos())
-            }
-
-            get("/todos/{id}"){
-                val id = call.parameters["id"]?.toIntOrNull()
-                if(id == null){
-                    call.respond(HttpStatusCode.BadRequest , "No user id found")
+            get("/todos/{user_id}"){
+                val userId = call.parameters["user_id"]
+                if(userId == null){
+                    call.respond(HttpStatusCode.BadRequest , "No user id provided")
                     return@get
                 }
-                val todo = repository.getToDo(id)
+                call.respond(repository.getAllTodos(userId))
+            }
+
+            get("/todos/{user_id}/{id}"){
+                val id = call.parameters["id"]?.toIntOrNull()
+                val userId = call.parameters["user_id"]
+
+                if(userId.isNullOrBlank()){
+                    call.respond(
+                        HttpStatusCode.BadRequest ,
+                        "No user id provided"
+                    )
+                    return@get
+                }
+                if(id == null){
+                    call.respond(HttpStatusCode.BadRequest , "No to do id found")
+                    return@get
+                }
+                val todo = repository.getToDo(id , userId)
 
                 if(todo == null){
                     call.respond(HttpStatusCode.NotFound , "No todo found that matches provided id")
@@ -171,6 +184,7 @@ fun Application.module(testing: Boolean = false) {
             }
 
             put("/todos/{id}"){
+
                 val toDoId = call.parameters["id"]?.toIntOrNull()
                 val todoDraft = call.receive<ToDoDraft>()
 
@@ -195,9 +209,18 @@ fun Application.module(testing: Boolean = false) {
                 }
             }
 
-            delete("/todos/{id}"){
+            delete("/todos/{user_id}/{id}"){
 
                 val toDoId = call.parameters["id"]?.toIntOrNull()
+                val userId = call.parameters["user_id"]
+
+                if(userId.isNullOrBlank()){
+                    call.respond(
+                        HttpStatusCode.BadRequest ,
+                        "No user id provided"
+                    )
+                    return@delete
+                }
 
                 if(toDoId == null){
                     call.respond(
@@ -207,7 +230,7 @@ fun Application.module(testing: Boolean = false) {
                     return@delete
                 }
 
-                val result = repository.removeToDo(toDoId)
+                val result = repository.removeToDo(toDoId , userId)
 
                 if(result){
                     call.respond(

@@ -5,6 +5,7 @@ import com.dev.james.entities.ToDo
 import com.dev.james.entities.ToDoDraft
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
+import org.ktorm.entity.filter
 import org.ktorm.entity.firstOrNull
 import org.ktorm.entity.sequenceOf
 import org.ktorm.entity.toList
@@ -47,14 +48,15 @@ class DatabaseManager {
 
 
     //todos
-    fun getAllToDos(): List<DBTodoEntity> {
+    fun getAllToDosByUserId(userId : String): List<DBTodoEntity> {
         return ktormDatabase.sequenceOf(
             DBTodoTable
-        ).toList()
+        ).filter { it.user_id eq userId }.toList()
     }
 
-    fun getTodo(id: Int): DBTodoEntity? {
+    fun getTodo(id: Int , userId: String): DBTodoEntity? {
         return ktormDatabase.sequenceOf(DBTodoTable)
+            .filter { it.user_id eq userId }
             .firstOrNull { it.id eq id }
     }
 
@@ -62,9 +64,10 @@ class DatabaseManager {
         val insertedId = ktormDatabase.insertAndGenerateKey(DBTodoTable) {
             set(DBTodoTable.title, draft.title)
             set(DBTodoTable.done, draft.done)
+            set(DBTodoTable.user_id , draft.user_id)
         } as Int
 
-        return ToDo(insertedId, draft.title, draft.done)
+        return ToDo(insertedId, draft.title, draft.done , draft.user_id)
     }
 
     fun updateTodo(id: Int, draft: ToDoDraft): Boolean {
@@ -72,6 +75,7 @@ class DatabaseManager {
             set(DBTodoTable.title, draft.title)
             set(DBTodoTable.done, draft.done)
             where {
+                it.user_id eq draft.user_id
                 it.id eq id
             }
         }
@@ -79,8 +83,9 @@ class DatabaseManager {
         return updatedRows > 0
     }
 
-    fun removeToDo(id: Int): Boolean {
+    fun removeToDo(id: Int , userId: String): Boolean {
         val deletedRows = ktormDatabase.delete(DBTodoTable) {
+            it.user_id eq userId
             it.id eq id
         }
 

@@ -6,11 +6,11 @@ import com.dev.james.entities.ToDoDraft
 class InMemoryTodoRepo : ToDoRepository {
     private val todos =  mutableListOf<ToDo>()
 
-    override fun getAllTodos(): List<ToDo> {
+    override fun getAllTodos(userId : String): List<ToDo> {
        return todos
     }
 
-    override fun getToDo(id: Int): ToDo? {
+    override fun getToDo(id: Int , userId: String): ToDo? {
        return todos.firstOrNull { it.id == id }
     }
 
@@ -18,13 +18,14 @@ class InMemoryTodoRepo : ToDoRepository {
         val todo = ToDo(
             title = draft.title ,
             done = draft.done ,
-            id = todos.size + 1
+            id = todos.size + 1 ,
+            user_id = draft.user_id
         )
         todos.add(todo)
         return todo
     }
 
-    override fun removeToDo(id: Int): Boolean {
+    override fun removeToDo(id: Int , userId: String): Boolean {
         return todos.removeIf { it.id == id }
     }
 

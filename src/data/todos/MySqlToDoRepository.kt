@@ -7,17 +7,18 @@ import com.dev.james.entities.ToDoDraft
 class MySqlToDoRepository : ToDoRepository {
     private val database = DatabaseManager()
 
-    override fun getAllTodos(): List<ToDo> {
-        return database.getAllToDos()
-            .map { ToDo(it.id, it.title, it.done) }
+    override fun getAllTodos(userId : String): List<ToDo> {
+        return database.getAllToDosByUserId(userId)
+            .map { ToDo(it.id, it.title, it.done , it.user_id) }
     }
 
-    override fun getToDo(id: Int): ToDo? {
-        return database.getTodo(id)?.let {
+    override fun getToDo(id: Int , userId: String): ToDo? {
+        return database.getTodo(id , userId)?.let {
             ToDo(
                 it.id,
                 it.title,
-                it.done
+                it.done ,
+                it.user_id
             )
         }
     }
@@ -27,8 +28,8 @@ class MySqlToDoRepository : ToDoRepository {
             .addTodo(draft)
     }
 
-    override fun removeToDo(id: Int): Boolean {
-        return database.removeToDo(id)
+    override fun removeToDo(id: Int , userId: String): Boolean {
+        return database.removeToDo(id , userId)
     }
 
     override fun updateToDo(id: Int, draft: ToDoDraft): Boolean {

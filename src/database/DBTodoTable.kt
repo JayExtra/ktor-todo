@@ -15,6 +15,7 @@ object DBTodoTable : Table<DBTodoEntity>(tableName = "todos") {
     val id = int("id").primaryKey().bindTo { it.id }
     val title = varchar("title").bindTo { it.title }
     val done = boolean("done").bindTo { it.done }
+    val user_id = varchar("user_id").bindTo { it.user_id }
 
 }
 
@@ -25,5 +26,6 @@ interface DBTodoEntity : Entity<DBTodoEntity> {
     val id : Int
     val title : String
     val done : Boolean
+    val user_id : String
 
 }
