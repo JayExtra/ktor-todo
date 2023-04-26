@@ -6,11 +6,14 @@ interface UserRepository {
 
     fun signUpUser(user : UserRepository.User) : Boolean
 
+    fun getUser(email : String) : User?
+
     data class User(
         val userId : String ,
         val email : String ,
         val username : String ,
         val salt : String ,
-        val password: String
+        val password: String ,
+        val refreshToken : String
     )
 }

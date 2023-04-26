@@ -3,6 +3,7 @@ package com.dev.james.authentication
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.dev.james.utilities.Constants.THIRTY_DAYS_TIME
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import java.util.*
@@ -33,7 +34,9 @@ class JwTConfig(jwtSecret : String) {
         .withIssuer(jwtIssuer)
         .withClaim(CLAIM_USERID, user.userId)
         .withClaim(CLAIM_USERNAME, user.userName)
+        .withExpiresAt(Date(System.currentTimeMillis() + THIRTY_DAYS_TIME))
         .sign(jwtAlgorithm)
+
 
     /**
      * Configure the jwt ktor authentication feature

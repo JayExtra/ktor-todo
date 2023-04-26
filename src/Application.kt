@@ -30,8 +30,7 @@ fun Application.module(testing: Boolean = false) {
 
     /*
 
-    TODO: 3. Put support for token expiry and token refresh
-        4. Research and add support for structured concurrency with Coroutines.
+    TODO: 4. Research and add support for structured concurrency with Coroutines.
     */
 
     install(ContentNegotiation) {
@@ -86,6 +85,7 @@ fun Application.module(testing: Boolean = false) {
 
             val loginResponse = LoginResponseBody(
                 token = token ,
+                refresh_token = user.refreshToken,
                 user = UserDetails(
                     email = user.email ,
                     password = user.password ,
@@ -122,7 +122,8 @@ fun Application.module(testing: Boolean = false) {
                     email = credentials.email ,
                     username = credentials.username ,
                     salt = saltedHash.salt ,
-                    password = saltedHash.hash
+                    password = saltedHash.hash ,
+                    refreshToken = generateRandomUid(60)
                 )
             )
 
@@ -131,7 +132,38 @@ fun Application.module(testing: Boolean = false) {
                 return@post
             }
 
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.OK , "User signed up successfully.")
+
+        }
+
+        post("/refresh_token") {
+            val refreshTokenBody = call.receive<RefreshTokenBody>()
+
+            if(refreshTokenBody.refresh_token.isEmpty()){
+                call.respond(HttpStatusCode.BadRequest , "refresh token is required to get a new token.")
+                return@post
+            }
+
+            if(refreshTokenBody.email.isEmpty()){
+                call.respond(HttpStatusCode.BadRequest , "your email is required to get a new token.")
+                return@post
+            }
+
+            val user = userRepository.getUser(refreshTokenBody.email)
+
+            if(user == null){
+                call.respond(HttpStatusCode.Conflict , "User with this email does not exist")
+                return@post
+            }
+
+            if(user.refreshToken != refreshTokenBody.refresh_token){
+                call.respond(HttpStatusCode.Conflict , "Refresh token provided does not exist.")
+                return@post
+            }
+
+            val newToken = jwtConfig.generateToken(JwTConfig.JwtUser(userId = user.userId , userName = user.username))
+
+            call.respond(newToken)
 
         }
 

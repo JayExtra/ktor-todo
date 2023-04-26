@@ -36,6 +36,7 @@ class DatabaseManager {
             set(DBUserTable.password , user.password)
             set(DBUserTable.salt , user.salt)
             set(DBUserTable.email , user.email)
+            set(DBUserTable.refreshToken , user.refreshToken)
         }
 
         return insertionProcess > 0
@@ -43,7 +44,7 @@ class DatabaseManager {
 
     fun getUser(email : String) : DBUserEntity? {
         return ktormDatabase.sequenceOf(DBUserTable)
-            .firstOrNull{ it.email eq email}
+            .firstOrNull{ it.email eq email }
     }
 
 

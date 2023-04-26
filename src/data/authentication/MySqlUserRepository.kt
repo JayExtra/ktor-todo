@@ -17,12 +17,30 @@ class MySqlUserRepository() : UserRepository {
                 username = user.username ,
                 salt = user.salt ,
                 password = user.password ,
-                email = user.email
+                email = user.email ,
+                refreshToken = user.refresh_token
             )
         }
     }
 
     override fun signUpUser(user: UserRepository.User): Boolean {
        return database.addUser(user)
+    }
+
+    override fun getUser(email: String): UserRepository.User? {
+       val user = database.getUser(email = email)
+
+        return if(user == null){
+           null
+        }else {
+            UserRepository.User(
+                username = user.username ,
+                userId = user.user_id ,
+                password = user.password ,
+                email = user.email ,
+                salt = user.salt ,
+                refreshToken = user.refresh_token
+            )
+        }
     }
 }
