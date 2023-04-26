@@ -11,5 +11,5 @@ fun generateRandomUid(len : Int) : String {
 
 object Constants {
     //const val THIRTY_DAYS_TIME = 2_592_000_000L
-    const val THIRTY_DAYS_TIME = 60_000L
+    const val THIRTY_DAYS_TIME = 300_000L
 }
