@@ -52,7 +52,6 @@ dependencies {
     //commons codec
     implementation "commons-codec:commons-codec:$commons_codec_version"
 
-    //kotlinx-serialization
 
 
 }

@@ -28,11 +28,6 @@ val jwtConfig = JwTConfig(System.getenv("KTOR_TODOLIST_JWT_SECRET"))
 fun Application.module(testing: Boolean = false) {
 
 
-    /*
-
-    TODO: 4. Research and add support for structured concurrency with Coroutines.
-    */
-
     install(ContentNegotiation) {
         gson {
 
