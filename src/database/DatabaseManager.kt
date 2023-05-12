@@ -3,6 +3,7 @@ package com.dev.james.database
 import com.dev.james.data.authentication.UserRepository
 import com.dev.james.entities.ToDo
 import com.dev.james.entities.ToDoDraft
+import kotlinx.coroutines.coroutineScope
 import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import org.ktorm.entity.filter
@@ -10,7 +11,11 @@ import org.ktorm.entity.firstOrNull
 import org.ktorm.entity.sequenceOf
 import org.ktorm.entity.toList
 
-class DatabaseManager {
+class  DatabaseManager {
+
+    /*
+    * create an abstraction for database manager for later dependency injection
+    * */
 
     private val hostname = "localhost"
     private val port = "3306"
@@ -54,6 +59,8 @@ class DatabaseManager {
             DBTodoTable
         ).filter { it.user_id eq userId }.toList()
     }
+
+
 
     fun getTodo(id: Int , userId: String): DBTodoEntity? {
         return ktormDatabase.sequenceOf(DBTodoTable)

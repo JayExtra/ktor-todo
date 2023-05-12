@@ -4,9 +4,9 @@ import com.dev.james.entities.ToDo
 import com.dev.james.entities.ToDoDraft
 
 interface ToDoRepository {
-    fun getAllTodos(userId : String) : List<ToDo>
-    fun getToDo(id : Int , userId: String) : ToDo?
-    fun addToDo(draft : ToDoDraft) : ToDo
-    fun removeToDo(id : Int , userId : String) : Boolean
-    fun updateToDo(id : Int , draft : ToDoDraft) : Boolean
+    suspend fun getAllTodos(userId : String) : List<ToDo>
+    suspend fun getToDo(id : Int , userId: String) : ToDo?
+    suspend fun addToDo(draft : ToDoDraft) : ToDo
+    suspend fun removeToDo(id : Int , userId : String) : Boolean
+    suspend fun updateToDo(id : Int , draft : ToDoDraft) : Boolean
 }
