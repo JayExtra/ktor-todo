@@ -16,5 +16,5 @@ object Constants {
     * instead of thirty days , token expiry will be set for 5 min so just
     * to demonstrate token refresh endpoint
     * */
-    const val THIRTY_DAYS_TIME = 300_000L
+    const val THIRTY_DAYS_TIME = 600_000L
 }

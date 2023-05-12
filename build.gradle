@@ -52,6 +52,9 @@ dependencies {
     //commons codec
     implementation "commons-codec:commons-codec:$commons_codec_version"
 
+    //kotlin x serialization
+    //implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
+
 
 
 }

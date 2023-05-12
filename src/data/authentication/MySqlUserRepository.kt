@@ -1,17 +1,29 @@
 package com.dev.james.data.authentication
 
-import com.dev.james.data.authentication.security.HashingService
 import com.dev.james.database.DatabaseManager
-import java.security.SecureRandom
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 
 class MySqlUserRepository() : UserRepository {
 
     private val database = DatabaseManager()
-    override fun loginUser(email: String, password: String): UserRepository.User? {
-        val user = database.getUser(email)
+    private val scope = CoroutineScope(Dispatchers.IO)
+
+    override suspend fun loginUser(email: String, password: String): UserRepository.User? {
+
+        val userDeferred = scope.async {database.getUser(email)}
+
+        userDeferred.invokeOnCompletion {
+            println(it?.message)
+        }
+
+        val user = userDeferred.await()
+
         return if (user == null) {
             null
         } else {
+
             UserRepository.User(
                 userId = user.user_id,
                 username = user.username,
@@ -23,12 +35,25 @@ class MySqlUserRepository() : UserRepository {
         }
     }
 
-    override fun signUpUser(user: UserRepository.User): Boolean {
-        return database.addUser(user)
+    override suspend fun signUpUser(user: UserRepository.User): Boolean {
+        val isAddedDeferred = scope.async { database.addUser(user) }
+
+        isAddedDeferred.invokeOnCompletion {
+            println(it?.message)
+        }
+
+        return isAddedDeferred.await()
     }
 
-    override fun getUser(email: String): UserRepository.User? {
-        val user = database.getUser(email = email)
+    override suspend fun getUser(email: String): UserRepository.User? {
+
+        val userDeferred = scope.async { database.getUser(email = email) }
+
+        userDeferred.invokeOnCompletion {
+            println(it?.message)
+        }
+
+        val user = userDeferred.await()
 
         return if (user == null) {
             null
