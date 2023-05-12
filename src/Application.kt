@@ -23,7 +23,9 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 val jwtConfig = JwTConfig(System.getenv("KTOR_TODOLIST_JWT_SECRET"))
 
-//TODO 1 : Research on structured concurrency in KTOR , coroutines and exception handling
+//TODO 1 : Research on structured concurrency in KTOR , cancellations and exception handling
+//TODO 2 : Look at doing tests in KTOR
+//TODO 3: Research and add dependency injection with Koin
 
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads

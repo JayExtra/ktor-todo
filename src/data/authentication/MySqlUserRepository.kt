@@ -23,7 +23,6 @@ class MySqlUserRepository() : UserRepository {
         return if (user == null) {
             null
         } else {
-
             UserRepository.User(
                 userId = user.user_id,
                 username = user.username,
