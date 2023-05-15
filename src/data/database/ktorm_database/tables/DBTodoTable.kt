@@ -1,6 +1,5 @@
-package com.dev.james.database
+package com.dev.james.data.database.ktorm_database.tables
 
-import com.dev.james.entities.ToDo
 import org.ktorm.entity.Entity
 import org.ktorm.schema.Table
 import org.ktorm.schema.boolean

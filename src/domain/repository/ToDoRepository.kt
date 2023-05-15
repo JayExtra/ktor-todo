@@ -1,7 +1,8 @@
-package com.dev.james.data.todos
+package com.dev.james.domain.repository
 
-import com.dev.james.entities.ToDo
-import com.dev.james.entities.ToDoDraft
+import com.dev.james.domain.models.ToDo
+import com.dev.james.domain.models.ToDoDraft
+
 
 interface ToDoRepository {
     suspend fun getAllTodos(userId : String) : List<ToDo>

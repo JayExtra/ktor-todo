@@ -1,4 +1,4 @@
-package com.dev.james.data.authentication.security
+package com.dev.james.domain.models
 
 data class SaltedHash(
     val hash : String ,

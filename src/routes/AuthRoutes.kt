@@ -1,10 +1,9 @@
 package com.dev.james.routes
 
 import com.dev.james.authentication.JwTConfig
-import com.dev.james.data.authentication.UserRepository
-import com.dev.james.data.authentication.security.HashingService
-import com.dev.james.data.authentication.security.SaltedHash
-import com.dev.james.entities.*
+import com.dev.james.domain.repository.UserRepository
+import com.dev.james.domain.authentication_security.HashingService
+import com.dev.james.domain.models.*
 import com.dev.james.jwtConfig
 import com.dev.james.utilities.generateRandomUid
 import io.ktor.application.*
@@ -14,7 +13,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 fun Route.createAuthRoutes(
-    userRepository: UserRepository ,
+    userRepository: UserRepository,
     hashingService: HashingService
 ){
     post("/login") {

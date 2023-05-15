@@ -36,6 +36,9 @@ dependencies {
     implementation "io.ktor:ktor-auth:$ktor_version"
     implementation "io.ktor:ktor-auth-jwt:$ktor_version"
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+    testImplementation "io.ktor:ktor-server-test-host:$ktor_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+
 
     //ktor gson
     implementation group: 'io.ktor', name: 'ktor-gson', version: ktor_version

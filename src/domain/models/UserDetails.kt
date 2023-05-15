@@ -1,4 +1,4 @@
-package com.dev.james.entities
+package com.dev.james.domain.models
 
 data class UserDetails(
     val user_id : String ,

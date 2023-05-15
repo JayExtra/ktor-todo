@@ -1,6 +1,4 @@
-package com.dev.james.entities
-
-import com.dev.james.data.authentication.UserRepository
+package com.dev.james.domain.models
 
 data class LoginResponseBody(
     val token : String ,

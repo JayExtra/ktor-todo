@@ -1,9 +1,8 @@
 package com.dev.james.routes
 
 import com.dev.james.authentication.JwTConfig
-import com.dev.james.data.authentication.UserRepository
-import com.dev.james.data.todos.ToDoRepository
-import com.dev.james.entities.ToDoDraft
+import com.dev.james.domain.models.ToDoDraft
+import com.dev.james.domain.repository.ToDoRepository
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*

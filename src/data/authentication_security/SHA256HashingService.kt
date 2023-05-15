@@ -1,5 +1,7 @@
-package com.dev.james.data.authentication.security
+package com.dev.james.data.authentication_security
 
+import com.dev.james.domain.authentication_security.HashingService
+import com.dev.james.domain.models.SaltedHash
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.codec.digest.DigestUtils
 import java.security.SecureRandom

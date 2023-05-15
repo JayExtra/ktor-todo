@@ -1,4 +1,4 @@
-package com.dev.james.database
+package com.dev.james.data.database.ktorm_database.tables
 
 import org.ktorm.entity.Entity
 import org.ktorm.schema.Table
